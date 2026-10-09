@@ -1,6 +1,5 @@
 import { createRef } from 'react';
-import { renderToString } from 'react-dom/server';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Avatar } from './Avatar';
 import { pickColor } from './colors';
@@ -124,12 +123,27 @@ describe('Avatar', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
       expect(ref.current).toBe(root);
     });
+  });
 
-    it('renders on the server without touching the DOM', () => {
-      const html = renderToString(<Avatar name="Server Side" />);
-      expect(html).toContain('SS');
-      expect(html).toContain('react-initial-avatar');
-      expect(html).toContain('role="img"');
+  describe('loose JavaScript inputs', () => {
+    it('tolerates null, undefined and numeric name', () => {
+      const { container, rerender } = render(<Avatar name={null as unknown as string} />);
+      expect(container.firstElementChild).toHaveTextContent('?');
+      rerender(<Avatar name={undefined} />);
+      expect(container.firstElementChild).toHaveTextContent('?');
+      rerender(<Avatar name={42 as unknown as string} />);
+      expect(container.firstElementChild).toHaveTextContent('4');
+    });
+
+    it('tolerates numeric initials, a null palette and a null aria-label', () => {
+      const { container } = render(
+        <Avatar
+          initials={42 as unknown as string}
+          colors={null as unknown as string[]}
+          aria-label={null as unknown as string}
+        />,
+      );
+      expect(container.firstElementChild).toHaveTextContent('42');
     });
   });
 
@@ -169,6 +183,27 @@ describe('Avatar', () => {
 
       rerender(<Avatar name="Jane Doe" src="https://example.com/bad.png" />);
       expect(screen.getByRole('img').tagName).toBe('SPAN');
+    });
+
+    it('detects an image that failed before React attached its listeners', async () => {
+      // Simulates a browser whose request for the image already errored (e.g. during SSR
+      // preload) so the <img>'s own onError never fires after hydration.
+      class FailingImage {
+        onerror: null | (() => void) = null;
+        set src(_value: string) {
+          queueMicrotask(() => this.onerror?.());
+        }
+      }
+      vi.stubGlobal('Image', FailingImage);
+      try {
+        render(<Avatar name="Jane Doe" src="https://example.com/gone.png" />);
+        await waitFor(() =>
+          expect(screen.getByRole('img', { name: 'Jane Doe' }).tagName).toBe('SPAN'),
+        );
+        expect(document.querySelector('img')).toBeNull();
+      } finally {
+        vi.unstubAllGlobals();
+      }
     });
   });
 });

@@ -1,4 +1,4 @@
-import { forwardRef, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, useEffect, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { contrastColor, DEFAULT_COLORS, pickColor } from './colors';
 import { getInitials } from './initials';
 import {
@@ -79,9 +79,28 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const showImage = Boolean(src) && failedSrc !== src;
 
-  const text = initials ?? getInitials(name, { maxInitials, splitWith });
-  const background = backgroundColor ?? pickColor(name || text, colors);
-  const label = ariaLabel ?? name;
+  // A request that errored before hydration never reaches the <img>'s onError (React does
+  // not replay error events), so probe the URL once on the client as well.
+  useEffect(() => {
+    if (!showImage || !src || typeof Image === 'undefined') return undefined;
+    let active = true;
+    const probe = new Image();
+    probe.onerror = () => {
+      if (active) setFailedSrc(src);
+    };
+    probe.src = src;
+    return () => {
+      active = false;
+      probe.onerror = null;
+    };
+  }, [showImage, src]);
+
+  // JavaScript consumers pass whatever their API returned; never let a null crash the tree.
+  const safeName = name == null ? '' : String(name);
+  const text =
+    initials == null ? getInitials(safeName, { maxInitials, splitWith }) : String(initials);
+  const background = backgroundColor ?? pickColor(safeName || text, colors ?? DEFAULT_COLORS);
+  const label = String(ariaLabel ?? safeName);
   const hasLabel = label.trim().length > 0;
 
   const computedStyle = computeAvatarStyle({
@@ -111,7 +130,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
         <img
           className="react-initial-avatar__img"
           src={src}
-          alt={alt ?? name}
+          alt={alt ?? safeName}
           style={IMAGE_STYLE}
           onError={() => setFailedSrc(src ?? null)}
         />

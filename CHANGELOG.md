@@ -18,8 +18,14 @@
 - No stylesheet is emitted or injected; all styles are inline. Overrides of `.avatar` rules
   must move to `style` or `className`.
 - `splitWith` default changed from `" "` to `/\s+/`.
+- Base styling changed: font size is `size / 2.5` (was `height / 2`; pass `textSizeRatio={2}`
+  to keep 1.x proportions), the root is `display: inline-flex` (was block-level `flex`),
+  `font-weight: 600` (was `bold`), `line-height: 1` (was `1.5`). `height` without `width` now
+  takes its width from `size` instead of `min-width: fit-content`.
 - The package is `"type": "module"` with an `exports` map. Deep imports such as
   `react-initial-avatar/dist/esm/index.js` no longer resolve.
+- The root entry is a client module (`'use client'`). Import `getInitials` and
+  `DEFAULT_COLORS` from `react-initial-avatar/utils` in Server Components.
 
 ### Added
 
@@ -27,7 +33,11 @@
   `maxInitials`, `textSizeRatio`, `fallback`, `className`, every `<span>` attribute, and a
   forwarded `ref`.
 - Default export alongside the named export.
-- `getInitials()` and `DEFAULT_COLORS` exports.
+- `getInitials()` and `DEFAULT_COLORS` exports, from the root and from the directive-free
+  `react-initial-avatar/utils` entry.
+- Image fallback also catches requests that failed before hydration (e.g. SSR preloads).
+- `name`, `initials`, `colors` and `aria-label` tolerate `null`/non-string values from
+  JavaScript callers instead of throwing.
 - Automatic text color by contrast with the background.
 - `role="img"` and `aria-label`; a real `<img alt>` when `src` is used.
 - Unicode-safe initials (accents, CJK, emoji, surrogate pairs).

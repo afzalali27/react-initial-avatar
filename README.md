@@ -143,7 +143,7 @@ const ref = useRef(null);
 ## Utilities
 
 ```ts
-import { getInitials, DEFAULT_COLORS } from 'react-initial-avatar';
+import { getInitials, DEFAULT_COLORS } from 'react-initial-avatar/utils';
 
 getInitials('Elizabeth Smith Brown'); // 'ES'
 getInitials('Elizabeth Smith Brown', { maxInitials: Infinity }); // 'ESB'
@@ -152,26 +152,42 @@ getInitials('john.doe', { splitWith: '.' }); // 'JD'
 DEFAULT_COLORS; // ['#E11D48', '#DB2777', …]
 ```
 
+The same two helpers are also exported from the package root for convenience. Prefer
+`react-initial-avatar/utils` in Server Components, route handlers and plain Node: the root
+entry is a client module (see below), so calling a function imported from it on the server
+throws in Next.js.
+
 ## Server rendering
 
-The component renders on the server with no browser APIs. The published files start with
-`'use client'`, so it can be imported directly from a React Server Component in Next.js.
+The component renders on the server with no browser APIs. The root entry starts with
+`'use client'`, so `<Avatar>` can be imported and rendered directly from a React Server
+Component in Next.js; its image fallback and `ref` work after hydration. For the helpers,
+import from `react-initial-avatar/utils`, which has no directive.
+
+Initials are computed with `Intl.Segmenter` when the runtime has it (Node 16+, all current
+browsers) and by code point otherwise. The only inputs where those differ are multi-codepoint
+graphemes such as emoji sequences or decomposed accents; on a browser without `Intl.Segmenter`
+that can produce a hydration text mismatch for such names. Pass `initials` explicitly if you
+need identical output everywhere.
 
 ## Migrating from 1.x
 
-2.0 keeps every 1.x prop working but changes a few defaults and one unit.
+2.0 keeps every 1.x prop working but changes the defaults, one unit, and some base styling.
 
-| 1.x behavior                                  | 2.x behavior                                    | What to do                                                       |
-| --------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------- |
-| React bundled inside the package              | `react` is a peer dependency (17, 18 or 19)     | Nothing, unless you are on React 16.                             |
-| Default 25px square, aliceblue/cornflowerblue | Default 40px circle, palette color + white text | Pass `size={25} round={false} backgroundColor color` to keep it. |
-| All words become initials (`"ESB"`)           | First two words (`"ES"`)                        | Pass `maxInitials={Infinity}`.                                   |
-| `borderRadius={50}` meant `50%`               | `borderRadius={50}` means `50px`                | Use `round` (`true`, `false`, px or any CSS value).              |
-| `.avatar` class, 4px/6px padding              | `.react-initial-avatar` class, no padding       | Move overrides to `className`/`style`; `size` is the exact box.  |
-| Injected stylesheet                           | Inline styles only                              | Nothing.                                                         |
-| `splitWith` default `" "`                     | Default `/\s+/` (any whitespace)                | Nothing, unless you relied on tabs/newlines not splitting.       |
-| Named export only                             | Default **and** named export                    | Nothing. `import Avatar from` now works as documented.           |
-| `dist/esm/index.js` deep imports              | `exports` map; deep imports are not resolvable  | Import from the package root.                                    |
+| 1.x behavior                                                    | 2.x behavior                                    | What to do                                                       |
+| --------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------- |
+| React bundled inside the package                                | `react` is a peer dependency (17, 18 or 19)     | Nothing, unless you are on React 16.                             |
+| Default 25px square, aliceblue/cornflowerblue                   | Default 40px circle, palette color + white text | Pass `size={25} round={false} backgroundColor color` to keep it. |
+| All words become initials (`"ESB"`)                             | First two words (`"ES"`)                        | Pass `maxInitials={Infinity}`.                                   |
+| `borderRadius={50}` meant `50%`                                 | `borderRadius={50}` means `50px`                | Use `round` (`true`, `false`, px or any CSS value).              |
+| Font size `height / 2` (15px at the default)                    | `size / 2.5` (16px at the default)              | Pass `textSizeRatio={2}` to keep 1.x proportions.                |
+| `display: flex` (block-level), `font-weight: bold`, line 1.5    | `inline-flex`, `font-weight: 600`, line 1       | Wrap in a block or override via `style` if the layout changes.   |
+| `height` alone → 25px wide, grows with `min-width: fit-content` | `height` alone → width from `size` (40px)       | Pass `width` as well, or use `size`.                             |
+| `.avatar` class, 4px/6px padding                                | `.react-initial-avatar` class, no padding       | Move overrides to `className`/`style`; `size` is the exact box.  |
+| Injected stylesheet                                             | Inline styles only                              | Nothing.                                                         |
+| `splitWith` default `" "`                                       | Default `/\s+/` (any whitespace)                | Nothing, unless you relied on tabs/newlines not splitting.       |
+| Named export only                                               | Default **and** named export                    | Nothing. `import Avatar from` now works as documented.           |
+| `dist/esm/index.js` deep imports                                | `exports` map; deep imports are not resolvable  | Import from the package root.                                    |
 
 ## Releasing (maintainers)
 

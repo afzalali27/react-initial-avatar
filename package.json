@@ -17,7 +17,24 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./utils": {
+      "import": {
+        "types": "./dist/utils.d.ts",
+        "default": "./dist/utils.js"
+      },
+      "require": {
+        "types": "./dist/utils.d.cts",
+        "default": "./dist/utils.cjs"
+      }
+    },
     "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "utils": [
+        "./dist/utils.d.ts"
+      ]
+    }
   },
   "sideEffects": false,
   "files": [
@@ -25,6 +42,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
+    "prebuild": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
