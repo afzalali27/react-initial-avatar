@@ -191,18 +191,21 @@ need identical output everywhere.
 
 ## Releasing (maintainers)
 
-One-time: on npmjs.com open the package → Settings → Trusted Publisher → GitHub Actions, and
-enter organization `afzalali27`, repository `react-initial-avatar`, workflow `release.yml`.
-
-Then for each release:
+Publishing runs in CI through [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
+(configured on npmjs.com for this repo and `release.yml`), so no npm token or OTP is involved.
+`master` is a protected branch: changes land through pull requests only.
 
 ```bash
-npm version <patch|minor|major>
-git push origin master --follow-tags
+git checkout -b release-x.y.z
+npm version <patch|minor|major>    # bumps package.json, commits, and tags v<x.y.z> locally
+git push -u origin release-x.y.z   # open a PR and merge it once CI is green
+git push origin v<x.y.z>           # after the merge: the tag triggers the Release workflow
 ```
 
-The `Release` workflow runs the tests, publishes to npm with provenance, and creates a GitHub
-release with generated notes. Pushing to `master` redeploys the Storybook to GitHub Pages.
+The `Release` workflow runs the checks, publishes to npm with a provenance attestation, and
+creates a GitHub release with generated notes. If the version is already on npm (for example
+after a manual publish) it skips the publish step and still creates the release. Every push to
+`master` redeploys the Storybook to GitHub Pages.
 
 ## License
 
