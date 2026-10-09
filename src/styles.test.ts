@@ -121,3 +121,18 @@ describe('computeAvatarStyle', () => {
     expect(style).toMatchObject({ backgroundColor: 'red', fontWeight: 400, width: '1px' });
   });
 });
+
+describe('computeAvatarStyle with null inputs', () => {
+  it('treats a null borderWidth as no border', () => {
+    const style = computeAvatarStyle({ ...base, borderWidth: null });
+    expect(style.borderWidth).toBeUndefined();
+    expect(style.borderStyle).toBeUndefined();
+  });
+
+  it('treats null height/width as unset', () => {
+    expect(computeAvatarStyle({ ...base, height: null, width: null })).toMatchObject({
+      width: '40px',
+      height: '40px',
+    });
+  });
+});

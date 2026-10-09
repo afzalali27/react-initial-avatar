@@ -3,18 +3,19 @@ import type { CSSProperties } from 'react';
 export type CssLength = number | string;
 export type Round = boolean | number | string;
 
+/** `null` on any optional field means "unset", same as `undefined`. */
 export interface AvatarStyleInput {
   size: CssLength;
-  height?: CssLength | undefined;
-  width?: CssLength | undefined;
+  height?: CssLength | null | undefined;
+  width?: CssLength | null | undefined;
   round: Round;
-  borderRadius?: CssLength | undefined;
+  borderRadius?: CssLength | null | undefined;
   backgroundColor: string;
   color: string;
   textSizeRatio: number;
-  borderWidth?: CssLength | undefined;
-  borderColor?: string | undefined;
-  style?: CSSProperties | undefined;
+  borderWidth?: CssLength | null | undefined;
+  borderColor?: string | null | undefined;
+  style?: CSSProperties | null | undefined;
 }
 
 export const DEFAULT_TEXT_SIZE_RATIO = 2.5;
@@ -46,8 +47,8 @@ export const toCssLength = (value: CssLength): string =>
   typeof value === 'number' ? `${value}px` : value;
 
 /** `borderRadius` (legacy) wins; otherwise map `round` to a radius. */
-export function resolveRadius(round: Round, borderRadius?: CssLength): string | number {
-  if (borderRadius !== undefined) return toCssLength(borderRadius);
+export function resolveRadius(round: Round, borderRadius?: CssLength | null): string | number {
+  if (borderRadius != null) return toCssLength(borderRadius);
   if (round === true) return '50%';
   if (round === false) return 0;
   return toCssLength(round);
@@ -62,7 +63,7 @@ export function computeAvatarStyle(input: AvatarStyleInput): CSSProperties {
       ? input.textSizeRatio
       : DEFAULT_TEXT_SIZE_RATIO;
   const { borderWidth } = input;
-  const hasBorder = borderWidth !== undefined && borderWidth !== 0 && borderWidth !== '0';
+  const hasBorder = borderWidth != null && borderWidth !== 0 && borderWidth !== '0';
 
   return {
     ...BASE_STYLE,

@@ -207,3 +207,39 @@ describe('Avatar', () => {
     });
   });
 });
+
+describe('Avatar with null props (treated as unset)', () => {
+  it('falls back to the default size, shape and initials rules', () => {
+    render(
+      <Avatar
+        name="Elizabeth Smith Brown"
+        size={null as unknown as number}
+        round={null as unknown as boolean}
+        maxInitials={null as unknown as number}
+        splitWith={null as unknown as string}
+        borderWidth={null as unknown as number}
+      />,
+    );
+    const root = screen.getByRole('img');
+    expect(root).toHaveTextContent('ES');
+    expect(root).toHaveStyle({ width: '40px', height: '40px', fontSize: '16px' });
+    expect(root.style.borderRadius).toBe('50%');
+    expect(root.style.borderStyle).toBe('');
+  });
+});
+
+describe('Avatar aria-label in image mode', () => {
+  it('uses the consumer aria-label as the image alt and leaves the wrapper unlabelled', () => {
+    render(<Avatar name="Jane Doe" src="https://example.com/a.png" aria-label="Profile photo" />);
+    const img = screen.getByRole('img', { name: 'Profile photo' });
+    expect(img.tagName).toBe('IMG');
+    expect(img.parentElement).not.toHaveAttribute('aria-label');
+  });
+
+  it('still prefers an explicit alt over aria-label', () => {
+    render(
+      <Avatar name="Jane Doe" src="https://example.com/a.png" aria-label="Profile" alt="Jane" />,
+    );
+    expect(screen.getByRole('img', { name: 'Jane' }).tagName).toBe('IMG');
+  });
+});
