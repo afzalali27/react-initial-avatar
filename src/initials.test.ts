@@ -79,3 +79,14 @@ describe('getInitials', () => {
     });
   });
 });
+
+describe('getInitials with loose inputs (no casts needed)', () => {
+  it('accepts null and undefined names in its signature', () => {
+    expect(getInitials(undefined)).toBe('');
+    expect(getInitials(null)).toBe('');
+  });
+
+  it('treats null options as unset', () => {
+    expect(getInitials('Elizabeth Smith Brown', { maxInitials: null, splitWith: null })).toBe('ES');
+  });
+});

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.1 — 2026-10-09
+
+### Fixed
+
+- `null` is treated as "unset" for `size`, `round`, `height`, `width`, `borderRadius`,
+  `borderWidth`, `borderColor`, `maxInitials` and `splitWith`, matching `undefined`.
+  Previously `size={null}` emitted invalid CSS and `borderWidth={null}` drew a default-width
+  border.
+- In image mode a consumer `aria-label` is now used as the `<img>` alt (`alt` still wins)
+  instead of being placed on the role-less wrapper.
+
+### Changed
+
+- `getInitials(name, options)` accepts `null`/`undefined` for `name` and for each option in
+  its TypeScript signature; the runtime already tolerated them.
+- First release published from CI through npm trusted publishing (provenance attested).
+
 ## 2.0.0 — 2026-10-09
 
 ### Breaking

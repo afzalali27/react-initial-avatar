@@ -1,8 +1,8 @@
 export interface GetInitialsOptions {
   /** Maximum number of words to take initials from. Default `2`. Use `Infinity` for all words. */
-  maxInitials?: number;
+  maxInitials?: number | null;
   /** Delimiter between words. Default: any run of whitespace. */
-  splitWith?: string | RegExp;
+  splitWith?: string | RegExp | null;
 }
 
 let segmenter: Intl.Segmenter | null | undefined;
@@ -28,8 +28,12 @@ function firstGrapheme(text: string): string {
  * `getInitials('Elizabeth Smith Brown')` → `'ES'`
  * `getInitials('Elizabeth Smith Brown', { maxInitials: Infinity })` → `'ESB'`
  */
-export function getInitials(name: string, options: GetInitialsOptions = {}): string {
-  const { maxInitials = 2, splitWith = /\s+/ } = options;
+export function getInitials(
+  name: string | null | undefined,
+  options: GetInitialsOptions | null = {},
+): string {
+  const maxInitials = options?.maxInitials ?? 2;
+  const splitWith = options?.splitWith ?? /\s+/;
   const trimmed = String(name ?? '').trim();
   if (!trimmed) return '';
 

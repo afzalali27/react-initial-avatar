@@ -9,6 +9,8 @@ import {
   type Round,
 } from './styles';
 
+const DEFAULT_SIZE = 40;
+
 export interface AvatarProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color' | 'children'> {
   /** Name to derive initials from. Also seeds the automatic color and the accessible label. */
   name?: string;
@@ -54,13 +56,13 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
     initials,
     src,
     alt,
-    size = 40,
-    round = true,
+    size,
+    round,
     backgroundColor,
     color,
-    colors = DEFAULT_COLORS,
-    maxInitials = 2,
-    splitWith = /\s+/,
+    colors,
+    maxInitials,
+    splitWith,
     textSizeRatio = DEFAULT_TEXT_SIZE_RATIO,
     borderWidth,
     borderColor,
@@ -104,10 +106,10 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
   const hasLabel = label.trim().length > 0;
 
   const computedStyle = computeAvatarStyle({
-    size,
+    size: size ?? DEFAULT_SIZE,
     height,
     width,
-    round,
+    round: round ?? true,
     borderRadius,
     backgroundColor: background,
     color: color ?? contrastColor(background),
@@ -123,14 +125,14 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       className={className ? `react-initial-avatar ${className}` : 'react-initial-avatar'}
       style={computedStyle}
       role={showImage ? role : (role ?? (hasLabel ? 'img' : undefined))}
-      aria-label={showImage ? ariaLabel : hasLabel ? label : undefined}
+      aria-label={!showImage && hasLabel ? label : undefined}
       {...rest}
     >
       {showImage ? (
         <img
           className="react-initial-avatar__img"
           src={src}
-          alt={alt ?? safeName}
+          alt={alt ?? ariaLabel ?? safeName}
           style={IMAGE_STYLE}
           onError={() => setFailedSrc(src ?? null)}
         />

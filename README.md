@@ -43,28 +43,28 @@ import Avatar from 'react-initial-avatar';
 
 ## Props
 
-| Prop              | Type                          | Default            | Description                                                                       |
-| ----------------- | ----------------------------- | ------------------ | --------------------------------------------------------------------------------- |
-| `name`            | `string`                      | `""`               | Name to derive initials from. Also seeds the color and the accessible label.      |
-| `initials`        | `string`                      | —                  | Explicit initials, rendered as given. Skips derivation from `name`.               |
-| `src`             | `string`                      | —                  | Image URL. If it fails to load, initials are shown instead. A new `src` retries.  |
-| `alt`             | `string`                      | `name`             | Alt text for the image.                                                           |
-| `size`            | `number \| string`            | `40`               | Width and height. Numbers are px; strings are any CSS length (`"2.5rem"`).        |
-| `round`           | `boolean \| number \| string` | `true`             | `true` circle, `false` square, number → px radius, string → raw CSS value.        |
-| `backgroundColor` | `string`                      | auto from `colors` | Any CSS color.                                                                    |
-| `color`           | `string`                      | auto contrast      | Text color. Defaults to black or white, whichever reads better on the background. |
-| `colors`          | `string[]`                    | `DEFAULT_COLORS`   | Palette for the automatic background.                                             |
-| `maxInitials`     | `number`                      | `2`                | Number of words used. `Infinity` for all.                                         |
-| `splitWith`       | `string \| RegExp`            | `/\s+/`            | Word delimiter for `name`.                                                        |
-| `textSizeRatio`   | `number`                      | `2.5`              | `fontSize = size / textSizeRatio`.                                                |
-| `borderWidth`     | `number \| string`            | `0`                | Numbers are px.                                                                   |
-| `borderColor`     | `string`                      | `"currentColor"`   | Defaults to the text color.                                                       |
-| `fallback`        | `ReactNode`                   | `"?"`              | Shown when there are no initials (blank `name`, no `initials`).                   |
-| `className`       | `string`                      | —                  | Appended after the built-in `react-initial-avatar` class.                         |
-| `style`           | `CSSProperties`               | —                  | Merged last, so it overrides everything computed.                                 |
-| `ref`             | `Ref<HTMLSpanElement>`        | —                  | Forwarded to the root `<span>`.                                                   |
-| `height`, `width` | `number \| string`            | —                  | Legacy. Override `size` per axis.                                                 |
-| `borderRadius`    | `number \| string`            | —                  | Legacy. Numbers are px. Overrides `round`.                                        |
+| Prop              | Type                          | Default                   | Description                                                                       |
+| ----------------- | ----------------------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| `name`            | `string`                      | `""`                      | Name to derive initials from. Also seeds the color and the accessible label.      |
+| `initials`        | `string`                      | —                         | Explicit initials, rendered as given. Skips derivation from `name`.               |
+| `src`             | `string`                      | —                         | Image URL. If it fails to load, initials are shown instead. A new `src` retries.  |
+| `alt`             | `string`                      | `aria-label`, then `name` | Alt text for the image.                                                           |
+| `size`            | `number \| string`            | `40`                      | Width and height. Numbers are px; strings are any CSS length (`"2.5rem"`).        |
+| `round`           | `boolean \| number \| string` | `true`                    | `true` circle, `false` square, number → px radius, string → raw CSS value.        |
+| `backgroundColor` | `string`                      | auto from `colors`        | Any CSS color.                                                                    |
+| `color`           | `string`                      | auto contrast             | Text color. Defaults to black or white, whichever reads better on the background. |
+| `colors`          | `string[]`                    | `DEFAULT_COLORS`          | Palette for the automatic background.                                             |
+| `maxInitials`     | `number`                      | `2`                       | Number of words used. `Infinity` for all.                                         |
+| `splitWith`       | `string \| RegExp`            | `/\s+/`                   | Word delimiter for `name`.                                                        |
+| `textSizeRatio`   | `number`                      | `2.5`                     | `fontSize = size / textSizeRatio`.                                                |
+| `borderWidth`     | `number \| string`            | `0`                       | Numbers are px.                                                                   |
+| `borderColor`     | `string`                      | `"currentColor"`          | Defaults to the text color.                                                       |
+| `fallback`        | `ReactNode`                   | `"?"`                     | Shown when there are no initials (blank `name`, no `initials`).                   |
+| `className`       | `string`                      | —                         | Appended after the built-in `react-initial-avatar` class.                         |
+| `style`           | `CSSProperties`               | —                         | Merged last, so it overrides everything computed.                                 |
+| `ref`             | `Ref<HTMLSpanElement>`        | —                         | Forwarded to the root `<span>`.                                                   |
+| `height`, `width` | `number \| string`            | —                         | Legacy. Override `size` per axis.                                                 |
+| `borderRadius`    | `number \| string`            | —                         | Legacy. Numbers are px. Overrides `round`.                                        |
 
 Every other `<span>` attribute (`title`, `onClick`, `data-*`, `aria-*`, …) is passed through.
 
