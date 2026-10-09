@@ -1,0 +1,7 @@
+dist
+storybook-static
+coverage
+package-lock.json
+CHANGELOG.md
+docs
+.superpowers
