@@ -9,6 +9,10 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # TypeScript 7 (native compiler) is not supported by tsup's .d.ts bundler yet.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:

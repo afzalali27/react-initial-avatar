@@ -1,6 +1,6 @@
 {
   "name": "react-initial-avatar",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Tiny, zero-dependency React avatar: initials from a name, automatic colors, image with fallback.",
   "type": "module",
   "main": "./dist/index.cjs",
